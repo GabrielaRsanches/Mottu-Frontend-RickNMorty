@@ -1,0 +1,35 @@
+<div class="container" style="height: 100%; width: 100%;">
+  <mat-form-field appearance="fill">
+    <mat-label>Search Characters</mat-label>
+    <input matInput type="text" [(ngModel)]="searchTerm" (input)="searchCharacters()">
+  </mat-form-field>
+  <div class="character-list">
+    <div class="row" *ngFor="let chunk of chunkedCharacters">
+      <div class="col" *ngFor="let character of chunk">
+        <mat-card *ngFor="let character of chunk" class="character-card">
+          <mat-card-header>
+            <div mat-card-avatar class="character-avatar">
+              <mat-card-title>{{ character.name }}</mat-card-title>
+              <img [src]="'https://rickandmortyapi.com/api/character/avatar/' + character.id + '.jpeg'" alt="{{ character.name }} Avatar">
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Status: {{ character.status }}</p>
+            <p>Species: {{ character.species }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button (click)="addToFavorites(character)" mat-button color="primary">Add to Favorites</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+      
+    </div>
+  </div>
+  <div class="pagination">
+    <button mat-button color="primary" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button mat-button color="primary" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
