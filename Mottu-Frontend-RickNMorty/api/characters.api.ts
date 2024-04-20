@@ -1,93 +1,73 @@
 import { Injectable } from '@angular/core';
+import { catchError, map, Observable } from 'rxjs';
+import { getCharacters, getCharacter,  ApiResponse, Character, CharacterFilter, Info } from 'rickmortyapi'; // Import methods from rickmortyapi
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-
-export interface CharacterApiResponse {
-  info: {
-    pages: number;
-  };
-  results: any[];
-}
 
 @Injectable({
-  providedIn: 'any',
+  providedIn: 'root',
 })
 export class CharacterApiService {
-  private apiUrl = 'https://rickandmortyapi.com/api/character';
   private favorites: number[] = [];
+  private apiUrl = 'https://rickandmortyapi.com/api/character';
 
   constructor(private http: HttpClient) {}
-
-  // Get all characters or search by name
-  getCharacters(name?: string): Observable<any[]> {
-    let url = this.apiUrl;
-    if (name) {
-      url += `?name=${name}`;
+    // Get characters from a specific page
+    getCharactersFromPage(page: number = 1): Observable<any> {
+      const url = `${this.apiUrl}/?page=${page}`;
+      return this.http.get<ApiResponse<Character>>(url);
     }
-    return this.http.get<any>(url).pipe(
-      map(response => response.results),
-      catchError(error => {
-        throw 'Error in getting characters: ' + error;
-      })
-    );
-  }
-  // Get characters from a specific page
-  getCharactersFromPage(page: number = 1): Observable<CharacterApiResponse> {
-    const url = `${this.apiUrl}/?page=${page}`;
-    return this.http.get<CharacterApiResponse>(url);
+  
+  // Get all characters
+  getAllCharacters(filters?: CharacterFilter): Promise<ApiResponse<Info<Character[]>>> {
+    return getCharacters(filters);
   }
 
-   // Get total count of characters
-   getTotalCountOfCharacters(): Observable<number> {
-    return this.http.get<any>(this.apiUrl).pipe(
-      map(response => response.info.count),
-      catchError(error => {
-        throw 'Error in getting total count of characters: ' + error;
-      })
-    );
+  // Search character by name
+  searchCharacterByName(name: string): Promise<ApiResponse<Info<Character[]>>> {
+    return getCharacters({ name });
   }
 
-  // Get total number of pages
-  getTotalPages(): Observable<number> {
-    return this.http.get<any>(this.apiUrl).pipe(
-      map(response => response.info.pages),
-      catchError(error => {
-        throw 'Error in getting total number of pages: ' + error;
-      })
-    );
+  // Get character information by id
+  getCharacterById(id: number): Promise<ApiResponse<Character>> {
+    return getCharacter(id);
+  }
+
+  // Get character information by id
+  getCharactersById(id: number[]): Promise<ApiResponse<Character[]>> {
+    return getCharacter(id);
   }
 
   // Add character to favorites
-  addToFavorites(characterId: number): Observable<any> {
+  addToFavorites(characterId: number): void {
     if (!this.favorites.includes(characterId)) {
       this.favorites.push(characterId);
     }
-    return new Observable(observer => {
-      observer.next();
-      observer.complete();
-    });
   }
 
   // Remove character from favorites
-  removeFromFavorites(characterId: number): Observable<any> {
+  removeFromFavorites(characterId: number): void {
     const index = this.favorites.indexOf(characterId);
     if (index !== -1) {
       this.favorites.splice(index, 1);
     }
-    return new Observable(observer => {
-      observer.next();
-      observer.complete();
-    });
   }
-
+  
   // Get favorite characters
-  getFavoriteCharacters(): Observable<any[]> {
-    // Assuming you have another API endpoint to retrieve favorite characters
+  getFavoriteCharacters(): Observable<Character[]> {
+    // Assuming you have another method to retrieve favorite characters
     // For demo purpose, returning an empty array
-    return new Observable(observer => {
+    return new Observable<Character[]>(observer => {
       observer.next([]);
       observer.complete();
     });
   }
+    // Get total number of pages
+    getTotalPages(): Observable<number> {
+      return this.http.get<any>(this.apiUrl).pipe(
+        map(response => response.info.pages),
+        catchError(error => {
+          throw 'Error in getting total number of pages: ' + error;
+        })
+      );
+    }  
 }
