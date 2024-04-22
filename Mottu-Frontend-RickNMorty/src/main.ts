@@ -8,13 +8,13 @@ import { HomeComponent } from './app/components/home/home.component';
 import { FavoritesComponent } from './app/components/favorites/favorites.component';
 // index.js
 
-
 bootstrapApplication(AppComponent, {
   providers: [
     CharacterApiService,
-    provideRouter([{ path: '', component: HomeComponent },
-    { path: 'favorites', component: FavoritesComponent }])
+    provideRouter([
+      { path: '', component: HomeComponent },
+      { path: 'favorites', component: FavoritesComponent },
+    ]),
     // ...
-  ]
-})
-  .catch(err => console.error(err));
+  ],
+}).catch((err) => console.error(err));
