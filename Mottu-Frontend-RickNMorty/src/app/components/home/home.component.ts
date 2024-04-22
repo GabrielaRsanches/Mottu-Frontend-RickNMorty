@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FavoriteCharactersService } from 'src/app/components/favorites/favorites.service';
 import { CharacterApiService } from 'api/characters.api';
 import { NoResultsFoundComponent } from '../no-results-found/no-results-found.component';
-import { FooterComponent } from '../footer/footer.component';
+
 
 @Component({
   selector: 'app-home',
@@ -20,7 +20,6 @@ import { FooterComponent } from '../footer/footer.component';
   styleUrls: ['../../../styles.css'],
   standalone: true,
   imports: [
-    FooterComponent,
     CommonModule,
     RouterOutlet,
     NoResultsFoundComponent,
